@@ -31,6 +31,20 @@ npm and WinGet are also release channels:
 
 The source tree deliberately uses non-release version placeholders. A release tag is the only source of a public version, so package metadata and rendered manifests never need manual version bumps.
 
+## Recovering a partial release
+
+If a release published the GitHub Release and npm package but a later channel
+step failed (for example an expired `HOMEBREW_TAP_TOKEN`), do not re-run the
+release job: it would try to recreate the existing release and npm version.
+Fix the secret, then run the **Publish Homebrew for a release** workflow for the
+same tag. It re-renders the Homebrew Formula from that release's `checksums.txt`,
+pushes it to the tap, and uploads the rendered WinGet manifests as an artifact
+for manual submission.
+
+```bash
+gh workflow run publish-channels.yml -f tag=v0.9.0
+```
+
 ## Release checks
 
 Run the local Rust release gate before tagging:
